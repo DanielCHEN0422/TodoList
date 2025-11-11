@@ -11,11 +11,14 @@ import ErrorMessage from './ErrorMessage'
 import AddTodoModal from './AddTodoModal'
 import './TodoList.less'
 
+type SortOption = 'priority' | 'created' | 'none'
+
 function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
+  const [sortBy, setSortBy] = useState<SortOption>('none')
   
   // 使用 useModal hook
   const addTodoModal = useModal({
@@ -116,11 +119,34 @@ function TodoList() {
     }
   }
 
+  // 排序功能
+  const getSortedTodos = () => {
+    const todosCopy = [...todos]
+    
+    switch (sortBy) {
+      case 'priority':
+        return todosCopy.sort((a, b) => {
+          const priorityOrder = { '高': 3, '中': 2, '低': 1 }
+          const aPriority = priorityOrder[a.priority || '中'] || 2
+          const bPriority = priorityOrder[b.priority || '中'] || 2
+          return bPriority - aPriority // 高优先级在前
+        })
+      case 'created':
+        return todosCopy.sort((a, b) => {
+          const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0
+          const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0
+          return bTime - aTime // 最新的在前
+        })
+      default:
+        return todosCopy
+    }
+  }
 
   // 统计
   const totalTodos = todos.length
   const completedTodos = todos.filter((todo) => todo.completed).length
   const remainingTodos = totalTodos - completedTodos
+  const sortedTodos = getSortedTodos()
 
   return (
     <div className="todo-list-container">
@@ -173,16 +199,44 @@ function TodoList() {
         ) : todos.length === 0 ? (
           <TodoEmpty />
         ) : (
-          <div className="todos-list">
-            {todos.map((todo) => (
-              <TodoItem
-                key={todo._id}
-                todo={todo}
-                onToggle={toggleTodo}
-                onDelete={deleteTodo}
-              />
-            ))}
-          </div>
+          <>
+            {/* 表头和排序 */}
+            <div className="todos-header">
+              <div className="header-left">
+                <h2 className="section-title">待办事项</h2>
+                <span className="todo-count">({sortedTodos.length})</span>
+              </div>
+              <div className="header-right">
+                <div className="sort-selector">
+                  <label className="sort-label">
+                    <span className="sort-icon">🔀</span>
+                    <span>排序：</span>
+                  </label>
+                  <select
+                    className="sort-select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  >
+                    <option value="none">默认</option>
+                    <option value="priority">按优先级</option>
+                    <option value="created">按创建时间</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 任务列表 */}
+            <div className="todos-list">
+              {sortedTodos.map((todo) => (
+                <TodoItem
+                  key={todo._id}
+                  todo={todo}
+                  onToggle={toggleTodo}
+                  onDelete={deleteTodo}
+                />
+              ))}
+            </div>
+          </>
         )}
       </section>
 
