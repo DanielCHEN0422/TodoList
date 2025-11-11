@@ -140,7 +140,7 @@
 .todo-description {
   font-size: 14px;
   color: #6b7280;
-  margin: 0 0 0 36px;
+  margin: 0 0 12px 36px;
   line-height: 1.6;
   transition: all 0.3s ease;
 
@@ -148,6 +148,88 @@
     text-decoration: line-through;
     color: #d1d5db;
     opacity: 0.6;
+  }
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 36px;
+  flex-wrap: wrap;
+}
+
+.todo-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+  transition: all 0.2s ease;
+
+  .category-icon {
+    font-size: 14px;
+  }
+
+  .category-text {
+    font-size: 12px;
+  }
+
+  &.category-工作 {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+  }
+
+  &.category-学习 {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+  }
+
+  &.category-生活 {
+    background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+    color: #9f1239;
+  }
+
+  &.category-自定义 {
+    background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
+    color: #6b21a8;
+  }
+}
+
+.todo-priority {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+
+  .priority-icon {
+    font-size: 14px;
+  }
+
+  .priority-text {
+    font-size: 12px;
+  }
+
+  &.priority-high {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+  }
+
+  &.priority-medium {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #d97706;
+  }
+
+  &.priority-low {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    color: #16a34a;
   }
 }
 

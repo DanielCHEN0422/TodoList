@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 // 创建待办事项
 router.post('/', async (req, res) => {
   try {
-    const { title, description, completed } = req.body;
+    const { title, description, completed, category, customCategory, priority } = req.body;
 
     if (!title || title.trim() === '') {
       return res.status(400).json({ message: 'Title is required' });
@@ -39,6 +39,9 @@ router.post('/', async (req, res) => {
       title: title.trim(),
       description: description?.trim() || '',
       completed: completed || false,
+      category: category || '生活',
+      customCategory: customCategory?.trim() || '',
+      priority: priority || '中',
     });
 
     const savedTodo = await todo.save();
@@ -51,7 +54,7 @@ router.post('/', async (req, res) => {
 // 更新待办事项
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, completed } = req.body;
+    const { title, description, completed, category, customCategory, priority } = req.body;
 
     const todo = await Todo.findById(req.params.id);
     if (!todo) {
@@ -61,6 +64,9 @@ router.put('/:id', async (req, res) => {
     if (title !== undefined) todo.title = title.trim();
     if (description !== undefined) todo.description = description?.trim() || '';
     if (completed !== undefined) todo.completed = completed;
+    if (category !== undefined) todo.category = category;
+    if (customCategory !== undefined) todo.customCategory = customCategory?.trim() || '';
+    if (priority !== undefined) todo.priority = priority;
 
     const updatedTodo = await todo.save();
     res.json(updatedTodo);

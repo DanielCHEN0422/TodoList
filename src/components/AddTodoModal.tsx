@@ -4,13 +4,19 @@ import './AddTodoModal.less'
 interface AddTodoModalProps {
   isOpen: boolean
   onClose: () => void
-  onAdd: (title: string, description?: string) => Promise<void>
+  onAdd: (title: string, description?: string, category?: string, customCategory?: string, priority?: string) => Promise<void>
   loading?: boolean
 }
+
+const CATEGORIES = ['工作', '学习', '生活', '自定义'] as const
+const PRIORITIES = ['低', '中', '高'] as const
 
 function AddTodoModal({ isOpen, onClose, onAdd, loading = false }: AddTodoModalProps) {
   const [titleValue, setTitleValue] = useState('')
   const [descriptionValue, setDescriptionValue] = useState('')
+  const [category, setCategory] = useState<'工作' | '学习' | '生活' | '自定义'>('生活')
+  const [customCategory, setCustomCategory] = useState('')
+  const [priority, setPriority] = useState<'低' | '中' | '高'>('中')
   const [error, setError] = useState<string | null>(null)
 
   // 当 modal 打开时重置表单
@@ -18,6 +24,9 @@ function AddTodoModal({ isOpen, onClose, onAdd, loading = false }: AddTodoModalP
     if (isOpen) {
       setTitleValue('')
       setDescriptionValue('')
+      setCategory('生活')
+      setCustomCategory('')
+      setPriority('中')
       setError(null)
     }
   }, [isOpen])
@@ -49,9 +58,20 @@ function AddTodoModal({ isOpen, onClose, onAdd, loading = false }: AddTodoModalP
       return
     }
 
+    if (category === '自定义' && customCategory.trim() === '') {
+      setError('请输入自定义分类名称')
+      return
+    }
+
     try {
       setError(null)
-      await onAdd(titleValue.trim(), descriptionValue.trim() || undefined)
+      await onAdd(
+        titleValue.trim(),
+        descriptionValue.trim() || undefined,
+        category,
+        category === '自定义' ? customCategory.trim() : undefined,
+        priority
+      )
       onClose()
     } catch (err) {
       setError('添加待办事项失败')
@@ -127,6 +147,59 @@ function AddTodoModal({ isOpen, onClose, onAdd, loading = false }: AddTodoModalP
             />
           </div>
 
+          <div className="form-group">
+            <label className="form-label">
+              <span className="label-icon">🏷️</span>
+              <span className="label-text">分类</span>
+            </label>
+            <div className="category-selector">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`category-option ${category === cat ? 'active' : ''}`}
+                  onClick={() => setCategory(cat)}
+                  disabled={loading}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            {category === '自定义' && (
+              <input
+                type="text"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                placeholder="输入自定义分类名称..."
+                className="form-input custom-category-input"
+                disabled={loading}
+              />
+            )}
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">
+              <span className="label-icon">⚡</span>
+              <span className="label-text">优先级</span>
+            </label>
+            <div className="priority-selector">
+              {PRIORITIES.map((pri) => (
+                <button
+                  key={pri}
+                  type="button"
+                  className={`priority-option priority-${pri} ${priority === pri ? 'active' : ''}`}
+                  onClick={() => setPriority(pri)}
+                  disabled={loading}
+                >
+                  <span className="priority-icon">
+                    {pri === '高' ? '🔴' : pri === '中' ? '🟡' : '🟢'}
+                  </span>
+                  <span className="priority-text">{pri}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="modal-actions">
             <button
               type="button"
@@ -161,4 +234,3 @@ function AddTodoModal({ isOpen, onClose, onAdd, loading = false }: AddTodoModalP
 }
 
 export default AddTodoModal
-

@@ -16,6 +16,21 @@ const todoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    category: {
+      type: String,
+      default: '生活',
+      enum: ['工作', '学习', '生活', '自定义'],
+    },
+    customCategory: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    priority: {
+      type: String,
+      default: '中',
+      enum: ['低', '中', '高'],
+    },
   },
   {
     timestamps: true,

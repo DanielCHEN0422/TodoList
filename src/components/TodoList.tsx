@@ -47,7 +47,13 @@ function TodoList() {
   }, [])
 
   // 添加待办事项
-  const handleAddTodo = async (title: string, description?: string) => {
+  const handleAddTodo = async (
+    title: string,
+    description?: string,
+    category?: string,
+    customCategory?: string,
+    priority?: string
+  ) => {
     try {
       setAdding(true)
       setError(null)
@@ -55,6 +61,9 @@ function TodoList() {
         title,
         description,
         completed: false,
+        category: category as '工作' | '学习' | '生活' | '自定义',
+        customCategory,
+        priority: priority as '低' | '中' | '高',
       })
       setTodos([newTodo, ...todos])
     } catch (err) {

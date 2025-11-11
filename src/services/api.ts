@@ -5,6 +5,9 @@ export interface Todo {
   title: string
   description?: string
   completed: boolean
+  category?: '工作' | '学习' | '生活' | '自定义'
+  customCategory?: string
+  priority?: '低' | '中' | '高'
   createdAt?: string
   updatedAt?: string
 }
@@ -23,6 +26,9 @@ export const createTodo = async (todo: {
   title: string
   description?: string
   completed?: boolean
+  category?: '工作' | '学习' | '生活' | '自定义'
+  customCategory?: string
+  priority?: '低' | '中' | '高'
 }): Promise<Todo> => {
   const response = await fetch(`${API_BASE_URL}/todos`, {
     method: 'POST',
@@ -44,6 +50,9 @@ export const updateTodo = async (
     title?: string
     description?: string
     completed?: boolean
+    category?: '工作' | '学习' | '生活' | '自定义'
+    customCategory?: string
+    priority?: '低' | '中' | '高'
   }
 ): Promise<Todo> => {
   const response = await fetch(`${API_BASE_URL}/todos/${id}`, {

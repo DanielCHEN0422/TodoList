@@ -11,6 +11,39 @@ interface TodoItemProps {
 function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
   const [isHovered, setIsHovered] = useState(false)
 
+  const getCategoryDisplay = () => {
+    if (todo.category === '自定义' && todo.customCategory) {
+      return todo.customCategory
+    }
+    return todo.category || '生活'
+  }
+
+  const getPriorityColor = () => {
+    switch (todo.priority) {
+      case '高':
+        return 'priority-high'
+      case '中':
+        return 'priority-medium'
+      case '低':
+        return 'priority-low'
+      default:
+        return 'priority-medium'
+    }
+  }
+
+  const getPriorityIcon = () => {
+    switch (todo.priority) {
+      case '高':
+        return '🔴'
+      case '中':
+        return '🟡'
+      case '低':
+        return '🟢'
+      default:
+        return '🟡'
+    }
+  }
+
   return (
     <div
       className={`todo-item ${todo.completed ? 'completed' : ''} ${isHovered ? 'hovered' : ''}`}
@@ -41,6 +74,16 @@ function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
             {todo.description}
           </p>
         )}
+        <div className="todo-meta">
+          <span className={`todo-category category-${todo.category || '生活'}`}>
+            <span className="category-icon">🏷️</span>
+            <span className="category-text">{getCategoryDisplay()}</span>
+          </span>
+          <span className={`todo-priority ${getPriorityColor()}`}>
+            <span className="priority-icon">{getPriorityIcon()}</span>
+            <span className="priority-text">{todo.priority || '中'}</span>
+          </span>
+        </div>
       </div>
 
       <button
