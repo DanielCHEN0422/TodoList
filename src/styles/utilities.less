@@ -21,6 +21,9 @@
       margin-bottom: @value * 1px; 
     }
   });
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  .my-auto { margin-top: auto; margin-bottom: auto; }
+  .m-auto { margin: auto; }
 }
 
 // 生成 padding 工具类
@@ -58,6 +61,7 @@
   });
   .h-full { height: 100%; }
   .h-auto { height: auto; }
+  .min-h-full { min-height: 100%; }
 }
 
 // 生成字体大小工具类
@@ -66,6 +70,14 @@
   each(@font-sizes, .(@value) {
     .text-@{value} { font-size: @value * 1px; }
   });
+}
+
+// 生成 resize 工具类
+.generate-resize() {
+  .resize-none { resize: none; }
+  .resize { resize: both; }
+  .resize-x { resize: horizontal; }
+  .resize-y { resize: vertical; }
 }
 
 // 生成文本对齐工具类
@@ -96,6 +108,7 @@
   .flex-1 { flex: 1 1 0%; }
   .flex-auto { flex: 1 1 auto; }
   .flex-none { flex: none; }
+  .flex-shrink-0 { flex-shrink: 0; }
 }
 
 // 生成定位工具类
@@ -164,6 +177,80 @@
   .select-all { user-select: all; }
 }
 
+// 生成颜色工具类
+.generate-colors() {
+  .text-white { color: #ffffff; }
+  .text-black { color: #000000; }
+  .text-gray-500 { color: #6b7280; }
+  .text-gray-800 { color: #1f2937; }
+  .text-blue-500 { color: #3b82f6; }
+  .text-red-500 { color: #ef4444; }
+  .text-green-500 { color: #10b981; }
+}
+
+// 生成背景色工具类
+.generate-backgrounds() {
+  .bg-white { background-color: #ffffff; }
+  .bg-gray-100 { background-color: #f3f4f6; }
+  .bg-gray-500 { background-color: #6b7280; }
+  .bg-blue-500 { background-color: #3b82f6; }
+  .bg-red-500 { background-color: #ef4444; }
+  .bg-green-500 { background-color: #10b981; }
+  
+  // Hover 状态
+  .hover\:bg-blue-600:hover { background-color: #2563eb; }
+  .hover\:bg-red-600:hover { background-color: #dc2626; }
+  .hover\:bg-gray-600:hover { background-color: #4b5563; }
+  .hover\:shadow-md:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+}
+
+// 生成边框工具类
+.generate-borders() {
+  .border { border: 1px solid #e5e7eb; }
+  .border-0 { border: 0; }
+  .border-t { border-top: 1px solid #e5e7eb; }
+  .border-r { border-right: 1px solid #e5e7eb; }
+  .border-b { border-bottom: 1px solid #e5e7eb; }
+  .border-l { border-left: 1px solid #e5e7eb; }
+}
+
+// 生成最大宽度工具类
+.generate-max-width() {
+  .max-w-600 { max-width: 600px; }
+  .max-w-800 { max-width: 800px; }
+  .max-w-1200 { max-width: 1200px; }
+}
+
+// 生成过渡效果工具类
+.generate-transitions() {
+  .transition-shadow { transition: box-shadow 0.15s ease-in-out; }
+  .transition-colors { transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out; }
+}
+
+// 生成文本装饰工具类
+.generate-text-decoration() {
+  .line-through { text-decoration: line-through; }
+  .underline { text-decoration: underline; }
+  .no-underline { text-decoration: none; }
+}
+
+// 生成宽度工具类（补充）
+.generate-width-extended() {
+  .min-w-0 { min-width: 0; }
+}
+
+// 生成 focus 状态工具类
+.generate-focus() {
+  .focus\:outline-none:focus { outline: none; }
+  .focus\:border-blue-500:focus { border-color: #3b82f6; }
+}
+
+// 生成禁用状态工具类
+.generate-disabled() {
+  .disabled\:bg-gray-300:disabled { background-color: #d1d5db; }
+  .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
+}
+
 // 执行所有生成函数
 .generate-margin();
 .generate-padding();
@@ -179,4 +266,14 @@
 .generate-overflow();
 .generate-cursor();
 .generate-user-select();
+.generate-colors();
+.generate-backgrounds();
+.generate-borders();
+.generate-max-width();
+.generate-transitions();
+.generate-text-decoration();
+.generate-width-extended();
+.generate-focus();
+.generate-disabled();
+.generate-resize();
 
