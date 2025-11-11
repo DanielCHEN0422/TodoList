@@ -1,24 +1,104 @@
-# TodoList - MERN Stack Application
+# Todo List 应用
 
-一个基于 MERN 技术栈（MongoDB + Express + React + Node.js）的待办事项管理应用。
-
-## 技术栈
-
-- **前端**: React 19 + TypeScript + Vite + Less
-- **后端**: Node.js + Express
-- **数据库**: MongoDB
-- **样式**: 模块化 CSS 工具类系统
+一个基于 MERN 技术栈（MongoDB + Express + React + Node.js）构建的现代化待办事项管理应用，支持多设备实时同步和冲突处理。
 
 ## 功能特性
 
-- ✅ 添加待办事项（包含标题和可选描述）
-- ✅ 标记完成/未完成
-- ✅ 删除待办事项
-- ✅ 清空所有已完成的待办事项
-- ✅ 数据持久化（MongoDB）
-- ✅ 实时统计（总计、已完成、待完成）
-- ✅ 响应式设计
-- ✅ 模块化 CSS 工具类
+- ✅ 待办事项的增删改查
+- ✅ 任务分类（工作/学习/生活/自定义）
+- ✅ 优先级设置（低/中/高）
+- ✅ 任务完成状态切换
+- ✅ 按优先级和时间排序
+- ✅ Tab 切换查看（全部/待办/已完成）
+- ✅ 亮色/暗色主题切换
+- ✅ 多设备实时同步
+- ✅ 数据冲突自动处理
+- ✅ 响应式设计，支持移动端
+
+## 技术栈
+
+### 前端
+- React 19.2.0
+- TypeScript 5.9.3
+- Vite 7.2.2
+- Less 4.4.2
+- Socket.IO Client 4.8.1
+
+### 后端
+- Node.js 20.18.0+
+- Express.js 4.18.2
+- MongoDB + Mongoose 8.0.3
+- Socket.IO 4.7.2
+
+## 快速开始
+
+### 前置要求
+
+- Node.js 20.19+ 或 22.12+（推荐）
+- MongoDB（本地安装或使用 MongoDB Atlas）
+- npm 或 yarn
+
+### 安装依赖
+
+#### 1. 安装前端依赖
+```bash
+npm install
+```
+
+#### 2. 安装后端依赖
+```bash
+cd server
+npm install
+cd ..
+```
+
+### 配置环境变量
+
+#### 后端配置（server/.env）
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/todolist
+CLIENT_URL=http://localhost:5173
+```
+
+#### 前端配置（.env）
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
+```
+
+### 启动应用
+
+#### 方式一：分别启动（推荐用于开发）
+
+**终端 1 - 启动后端服务器**
+```bash
+cd server
+npm run dev
+```
+
+**终端 2 - 启动前端开发服务器**
+```bash
+npm run dev
+```
+
+#### 方式二：使用 npm scripts
+
+**启动后端**
+```bash
+npm run server
+```
+
+**启动前端**
+```bash
+npm run dev
+```
+
+### 访问应用
+
+- 前端地址：http://localhost:5173
+- 后端 API：http://localhost:5000/api
+- 健康检查：http://localhost:5000/api/health
 
 ## 项目结构
 
@@ -26,121 +106,68 @@
 TODOList/
 ├── src/                    # 前端源代码
 │   ├── components/         # React 组件
-│   ├── services/           # API 服务
+│   ├── services/           # API 和 WebSocket 服务
+│   ├── hooks/              # 自定义 Hooks
+│   ├── contexts/           # React Context
 │   └── styles/             # 样式文件
 ├── server/                 # 后端源代码
 │   ├── config/             # 配置文件
-│   ├── models/             # 数据模型
-│   └── routes/             # API 路由
-└── package.json            # 前端依赖
+│   ├── models/             # Mongoose 模型
+│   ├── routes/              # Express 路由
+│   └── services/           # 业务逻辑服务
+├── dist/                   # 前端构建输出
+└── package.json            # 前端依赖配置
 ```
 
-## 安装和运行
+## 主要功能说明
 
-### 前置要求
+### 多设备同步
+应用支持多设备实时同步，当你在一个设备上操作时，其他设备会自动更新。详情请查看 [MULTI_DEVICE_SYNC.md](./MULTI_DEVICE_SYNC.md)
 
-- Node.js (v20.19+ 或 v22.12+)
-- MongoDB (本地安装或使用 MongoDB Atlas)
+### 冲突处理
+当多个设备同时修改同一条待办事项时，系统会自动检测冲突并使用最新版本，避免数据丢失。
 
-### 1. 安装依赖
+### 主题切换
+点击页面上的主题切换按钮，可以在亮色和暗色主题之间切换，主题偏好会保存在本地。
+
+## 开发命令
 
 ```bash
-# 安装前端依赖
-npm install
+# 前端开发
+npm run dev              # 启动开发服务器
 
-# 安装后端依赖
-npm run server:install
+# 前端构建
+npm run build            # 构建生产版本
+
+# 后端开发
+cd server
+npm run dev              # 启动后端开发服务器（带热重载）
+
+# 后端生产
+cd server
+npm start                # 启动后端生产服务器
 ```
 
-### 2. 配置 MongoDB
+## 常见问题
 
-#### 选项 A: 本地 MongoDB
+### MongoDB 连接失败
+- 确保 MongoDB 服务正在运行
+- 检查 `server/.env` 中的 `MONGODB_URI` 配置是否正确
+- 如果使用 MongoDB Atlas，确保网络访问列表已配置
 
-1. 安装并启动 MongoDB
-2. 确保 MongoDB 运行在 `mongodb://localhost:27017`
+### WebSocket 连接失败
+- 确保后端服务器正在运行
+- 检查防火墙设置
+- 确认 `VITE_SOCKET_URL` 配置正确
 
-#### 选项 B: MongoDB Atlas (云数据库)
-
-1. 在 [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) 创建免费账户
-2. 创建集群并获取连接字符串
-3. 在 `server/.env` 文件中配置连接字符串
-
-### 3. 配置环境变量
-
-在 `server` 目录下创建 `.env` 文件：
-
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/todolist
-NODE_ENV=development
-```
-
-如果使用 MongoDB Atlas，将 `MONGODB_URI` 替换为你的 Atlas 连接字符串。
-
-### 4. 运行应用
-
-#### 开发模式（推荐）
-
-打开两个终端窗口：
-
-**终端 1 - 启动后端服务器：**
-```bash
-npm run server
-```
-
-**终端 2 - 启动前端开发服务器：**
-```bash
-npm run dev
-```
-
-#### 生产模式
-
-**启动后端：**
-```bash
-npm run server:start
-```
-
-**构建并预览前端：**
-```bash
-npm run build
-npm run preview
-```
-
-## API 端点
-
-后端服务器运行在 `http://localhost:5000`
-
-- `GET /api/todos` - 获取所有待办事项
-- `GET /api/todos/:id` - 获取单个待办事项
-- `POST /api/todos` - 创建待办事项
-- `PUT /api/todos/:id` - 更新待办事项
-- `DELETE /api/todos/:id` - 删除待办事项
-- `DELETE /api/todos/completed/all` - 删除所有已完成的待办事项
-- `GET /api/health` - 健康检查
-
-## 使用说明
-
-1. 在输入框中输入待办事项标题（必填）
-2. 可选：添加描述信息
-3. 点击"添加待办事项"按钮或按回车键添加
-4. 点击复选框标记为完成/未完成
-5. 点击"删除"按钮删除单个待办事项
-6. 点击"清空已完成"按钮批量删除已完成的待办事项
-
-## 开发说明
-
-### 模块化 CSS 工具类
-
-项目使用自定义的模块化 CSS 工具类系统，类似于 Tailwind CSS。所有样式都通过工具类配置，无需编写自定义 CSS。
-
-常用工具类示例：
-- `mb-8` → `margin-bottom: 8px`
-- `px-16` → `padding-left: 16px; padding-right: 16px`
-- `flex items-center` → `display: flex; align-items: center`
-- `bg-blue-500` → `background-color: #3b82f6`
-
-详细工具类定义请查看 `src/styles/utilities.less`
+### 端口被占用
+- 修改 `server/.env` 中的 `PORT` 配置
+- 或修改 `vite.config.ts` 中的前端端口配置
 
 ## 许可证
 
-MIT
+MIT License
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
