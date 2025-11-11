@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import * as api from '../services/api'
 import type { Todo } from '../services/api'
 import { useModal } from '../hooks/useModal'
@@ -12,6 +12,7 @@ import AddTodoModal from './AddTodoModal'
 import './TodoList.less'
 
 type SortOption = 'priority' | 'created' | 'none'
+type TabType = 'all' | 'active' | 'completed'
 
 function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([])
@@ -19,6 +20,7 @@ function TodoList() {
   const [error, setError] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
   const [sortBy, setSortBy] = useState<SortOption>('none')
+  const [activeTab, setActiveTab] = useState<TabType>('all')
   
   // 使用 useModal hook
   const addTodoModal = useModal({
@@ -119,9 +121,27 @@ function TodoList() {
     }
   }
 
+  // 根据 tab 过滤任务
+  const filteredTodos = useMemo(() => {
+    let filtered = todos
+
+    switch (activeTab) {
+      case 'active':
+        filtered = todos.filter((todo) => !todo.completed)
+        break
+      case 'completed':
+        filtered = todos.filter((todo) => todo.completed)
+        break
+      default:
+        filtered = todos
+    }
+
+    return filtered
+  }, [todos, activeTab])
+
   // 排序功能
   const getSortedTodos = () => {
-    const todosCopy = [...todos]
+    const todosCopy = [...filteredTodos]
     
     switch (sortBy) {
       case 'priority':
@@ -181,13 +201,15 @@ function TodoList() {
         </button>
       </section>
 
-      {/* 统计信息 */}
+      {/* 统计信息和 Tab 切换 */}
       {totalTodos > 0 && (
         <section className="stats-section">
           <TodoStats
             total={totalTodos}
             completed={completedTodos}
             remaining={remainingTodos}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
           />
         </section>
       )}
@@ -200,42 +222,60 @@ function TodoList() {
           <TodoEmpty />
         ) : (
           <>
+
             {/* 表头和排序 */}
-            <div className="todos-header">
-              <div className="header-left">
-                <h2 className="section-title">待办事项</h2>
-                <span className="todo-count">({sortedTodos.length})</span>
-              </div>
-              <div className="header-right">
-                <div className="sort-selector">
-                  <label className="sort-label">
-                    <span className="sort-icon">🔀</span>
-                    <span>排序：</span>
-                  </label>
-                  <select
-                    className="sort-select"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  >
-                    <option value="none">默认</option>
-                    <option value="priority">按优先级</option>
-                    <option value="created">按创建时间</option>
-                  </select>
+            {sortedTodos.length > 0 && (
+              <div className="todos-header">
+                <div className="header-left">
+                  <h2 className="section-title">
+                    {activeTab === 'all' ? '全部事项' : activeTab === 'active' ? '待办事项' : '已完成事项'}
+                  </h2>
+                  <span className="todo-count">({sortedTodos.length})</span>
+                </div>
+                <div className="header-right">
+                  <div className="sort-selector">
+                    <label className="sort-label">
+                      <span className="sort-icon">🔀</span>
+                      <span>排序：</span>
+                    </label>
+                    <select
+                      className="sort-select"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as SortOption)}
+                    >
+                      <option value="none">默认</option>
+                      <option value="priority">按优先级</option>
+                      <option value="created">按创建时间</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* 任务列表 */}
-            <div className="todos-list">
-              {sortedTodos.map((todo) => (
-                <TodoItem
-                  key={todo._id}
-                  todo={todo}
-                  onToggle={toggleTodo}
-                  onDelete={deleteTodo}
-                />
-              ))}
-            </div>
+            {sortedTodos.length > 0 ? (
+              <div className="todos-list">
+                {sortedTodos.map((todo) => (
+                  <TodoItem
+                    key={todo._id}
+                    todo={todo}
+                    onToggle={toggleTodo}
+                    onDelete={deleteTodo}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="empty-tab-message">
+                <div className="empty-tab-icon">
+                  {activeTab === 'active' ? '⏰' : '✅'}
+                </div>
+                <p className="empty-tab-text">
+                  {activeTab === 'active' 
+                    ? '暂无待办事项，所有任务都已完成！' 
+                    : '暂无已完成的事项'}
+                </p>
+              </div>
+            )}
           </>
         )}
       </section>
