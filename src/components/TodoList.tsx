@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import * as api from '../services/api'
-import type { Todo } from '../services/api'
+import type { Todo, ConflictError } from '../services/api'
+import { socketService } from '../services/socketService'
 import { useModal } from '../hooks/useModal'
 import TodoItem from './TodoItem'
 import TodoStats from './TodoStats'
@@ -47,8 +48,57 @@ function TodoList() {
     }
   }
 
+  // 用于标记是否由本地操作引起的更新（避免循环更新）
+  const isLocalUpdate = useRef(false)
+
   useEffect(() => {
     loadTodos()
+    
+    // 初始化 WebSocket 连接
+    socketService.connect()
+
+    // 监听 Todo 创建事件
+    const handleTodoCreated = (newTodo: Todo) => {
+      if (!isLocalUpdate.current) {
+        setTodos((prevTodos) => {
+          // 检查是否已存在（避免重复）
+          if (prevTodos.find((t) => t._id === newTodo._id)) {
+            return prevTodos
+          }
+          return [newTodo, ...prevTodos]
+        })
+      }
+      isLocalUpdate.current = false
+    }
+
+    // 监听 Todo 更新事件
+    const handleTodoUpdated = (updatedTodo: Todo) => {
+      if (!isLocalUpdate.current) {
+        setTodos((prevTodos) =>
+          prevTodos.map((t) => (t._id === updatedTodo._id ? updatedTodo : t))
+        )
+      }
+      isLocalUpdate.current = false
+    }
+
+    // 监听 Todo 删除事件
+    const handleTodoDeleted = (data: { _id: string }) => {
+      if (!isLocalUpdate.current) {
+        setTodos((prevTodos) => prevTodos.filter((t) => t._id !== data._id))
+      }
+      isLocalUpdate.current = false
+    }
+
+    socketService.on('todo:created', handleTodoCreated)
+    socketService.on('todo:updated', handleTodoUpdated)
+    socketService.on('todo:deleted', handleTodoDeleted)
+
+    return () => {
+      socketService.off('todo:created', handleTodoCreated)
+      socketService.off('todo:updated', handleTodoUpdated)
+      socketService.off('todo:deleted', handleTodoDeleted)
+      socketService.disconnect()
+    }
   }, [])
 
   // 添加待办事项
@@ -62,6 +112,7 @@ function TodoList() {
     try {
       setAdding(true)
       setError(null)
+      isLocalUpdate.current = true
       const newTodo = await api.createTodo({
         title,
         description,
@@ -80,20 +131,34 @@ function TodoList() {
     }
   }
 
-  // 切换完成状态
+  // 切换完成状态（支持冲突处理）
   const toggleTodo = async (id: string) => {
     try {
       setError(null)
       const todo = todos.find((t) => t._id === id)
       if (!todo) return
 
+      isLocalUpdate.current = true
       const updatedTodo = await api.updateTodo(id, {
         completed: !todo.completed,
+        version: todo.version,
       })
       setTodos(todos.map((t) => (t._id === id ? updatedTodo : t)))
-    } catch (err) {
-      setError('更新待办事项失败')
-      console.error('Error updating todo:', err)
+    } catch (err: any) {
+      // 处理冲突
+      if (err.isConflict) {
+        const conflictError = err as ConflictError
+        // 使用服务器版本（最后写入获胜策略）
+        setTodos(todos.map((t) => 
+          t._id === id ? conflictError.serverTodo : t
+        ))
+        setError('检测到数据冲突，已自动使用最新版本')
+        // 3秒后清除错误提示
+        setTimeout(() => setError(null), 3000)
+      } else {
+        setError('更新待办事项失败')
+        console.error('Error updating todo:', err)
+      }
     }
   }
 
@@ -101,6 +166,7 @@ function TodoList() {
   const deleteTodo = async (id: string) => {
     try {
       setError(null)
+      isLocalUpdate.current = true
       await api.deleteTodo(id)
       setTodos(todos.filter((todo) => todo._id !== id))
     } catch (err) {
@@ -113,6 +179,7 @@ function TodoList() {
   const clearCompleted = async () => {
     try {
       setError(null)
+      isLocalUpdate.current = true
       await api.deleteCompletedTodos()
       setTodos(todos.filter((todo) => !todo.completed))
     } catch (err) {

@@ -31,6 +31,14 @@ const todoSchema = new mongoose.Schema(
       default: '中',
       enum: ['低', '中', '高'],
     },
+    version: {
+      type: Number,
+      default: 1,
+    },
+    lastModifiedBy: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
 import connectDB from './config/database.js';
 import todoRoutes from './routes/todoRoutes.js';
+import { initializeSocket } from './services/socketService.js';
 
 // 加载环境变量
 dotenv.config();
@@ -32,8 +34,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
+// 创建 HTTP 服务器
+const httpServer = createServer(app);
+
+// 初始化 Socket.IO
+initializeSocket(httpServer);
+
 // 启动服务器
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`WebSocket server initialized`);
 });
 
