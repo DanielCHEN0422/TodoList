@@ -1,0 +1,120 @@
+.todo-list-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.todo-header {
+  text-align: center;
+  margin-bottom: 48px;
+  padding-top: 24px;
+
+  .header-content {
+    position: relative;
+    display: inline-block;
+  }
+
+  .header-title {
+    font-size: 56px;
+    font-weight: 900;
+    margin: 0 0 16px 0;
+    color: #ffffff;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    .title-icon {
+      font-size: 48px;
+      animation: float 3s ease-in-out infinite;
+      
+      &:nth-child(3) {
+        animation-delay: 0.5s;
+      }
+    }
+
+    .title-text {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .header-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.error-container {
+  margin-bottom: 24px;
+}
+
+.input-section {
+  margin-bottom: 32px;
+}
+
+.stats-section {
+  margin-bottom: 28px;
+}
+
+.todos-section {
+  margin-bottom: 32px;
+}
+
+.todos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.clear-section {
+  margin-top: 32px;
+  text-align: center;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .todo-list-container {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  .todo-header {
+    margin-bottom: 32px;
+
+    .header-title {
+      font-size: 40px;
+      gap: 12px;
+
+      .title-icon {
+        font-size: 36px;
+      }
+    }
+
+    .header-subtitle {
+      font-size: 16px;
+    }
+  }
+
+  .todos-list {
+    gap: 12px;
+  }
+}
+

@@ -1,0 +1,46 @@
+.todo-loading {
+  text-align: center;
+  padding: 64px 20px;
+}
+
+.loading-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: pulse 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+.loading-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .todo-loading {
+    padding: 48px 16px;
+  }
+
+  .loading-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .loading-text {
+    font-size: 16px;
+  }
+}
+

@@ -1,0 +1,55 @@
+.todo-empty {
+  text-align: center;
+  padding: 64px 20px;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 96px;
+  margin-bottom: 24px;
+  animation: bounce 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.empty-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.empty-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .todo-empty {
+    padding: 48px 16px;
+  }
+
+  .empty-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+  }
+
+  .empty-title {
+    font-size: 20px;
+  }
+
+  .empty-subtitle {
+    font-size: 14px;
+  }
+}
+

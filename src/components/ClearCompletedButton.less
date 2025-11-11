@@ -1,0 +1,45 @@
+.clear-completed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #fb923c 0%, #ef4444 50%, #ec4899 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(251, 146, 60, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(251, 146, 60, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .btn-icon {
+    font-size: 20px;
+  }
+
+  .btn-text {
+    font-size: 15px;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .clear-completed-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+
+    .btn-icon {
+      font-size: 18px;
+    }
+  }
+}
+
