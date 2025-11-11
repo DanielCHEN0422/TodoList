@@ -1,0 +1,182 @@
+// 工具类样式文件
+// 使用 Less 循环生成常用的工具类
+
+// 尺寸值数组
+@sizes: 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96;
+
+// 生成 margin 工具类
+.generate-margin() {
+  each(@sizes, .(@value) {
+    .m@{value} { margin: @value * 1px; }
+    .mt@{value} { margin-top: @value * 1px; }
+    .mr@{value} { margin-right: @value * 1px; }
+    .mb@{value} { margin-bottom: @value * 1px; }
+    .ml@{value} { margin-left: @value * 1px; }
+    .mx@{value} { 
+      margin-left: @value * 1px; 
+      margin-right: @value * 1px; 
+    }
+    .my@{value} { 
+      margin-top: @value * 1px; 
+      margin-bottom: @value * 1px; 
+    }
+  });
+}
+
+// 生成 padding 工具类
+.generate-padding() {
+  each(@sizes, .(@value) {
+    .p@{value} { padding: @value * 1px; }
+    .pt@{value} { padding-top: @value * 1px; }
+    .pr@{value} { padding-right: @value * 1px; }
+    .pb@{value} { padding-bottom: @value * 1px; }
+    .pl@{value} { padding-left: @value * 1px; }
+    .px@{value} { 
+      padding-left: @value * 1px; 
+      padding-right: @value * 1px; 
+    }
+    .py@{value} { 
+      padding-top: @value * 1px; 
+      padding-bottom: @value * 1px; 
+    }
+  });
+}
+
+// 生成宽度工具类
+.generate-width() {
+  each(@sizes, .(@value) {
+    .w@{value} { width: @value * 1px; }
+  });
+  .w-full { width: 100%; }
+  .w-auto { width: auto; }
+}
+
+// 生成高度工具类
+.generate-height() {
+  each(@sizes, .(@value) {
+    .h@{value} { height: @value * 1px; }
+  });
+  .h-full { height: 100%; }
+  .h-auto { height: auto; }
+}
+
+// 生成字体大小工具类
+@font-sizes: 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48;
+.generate-font-size() {
+  each(@font-sizes, .(@value) {
+    .text-@{value} { font-size: @value * 1px; }
+  });
+}
+
+// 生成文本对齐工具类
+.generate-text-align() {
+  .text-left { text-align: left; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  .text-justify { text-align: justify; }
+}
+
+// 生成 flex 工具类
+.generate-flex() {
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .flex-row { flex-direction: row; }
+  .flex-wrap { flex-wrap: wrap; }
+  .flex-nowrap { flex-wrap: nowrap; }
+  .items-start { align-items: flex-start; }
+  .items-center { align-items: center; }
+  .items-end { align-items: flex-end; }
+  .items-stretch { align-items: stretch; }
+  .justify-start { justify-content: flex-start; }
+  .justify-center { justify-content: center; }
+  .justify-end { justify-content: flex-end; }
+  .justify-between { justify-content: space-between; }
+  .justify-around { justify-content: space-around; }
+  .justify-evenly { justify-content: space-evenly; }
+  .flex-1 { flex: 1 1 0%; }
+  .flex-auto { flex: 1 1 auto; }
+  .flex-none { flex: none; }
+}
+
+// 生成定位工具类
+.generate-position() {
+  .relative { position: relative; }
+  .absolute { position: absolute; }
+  .fixed { position: fixed; }
+  .static { position: static; }
+  .sticky { position: sticky; }
+}
+
+// 生成显示工具类
+.generate-display() {
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .inline { display: inline; }
+  .hidden { display: none; }
+}
+
+// 生成边框圆角工具类
+@border-radius: 2, 4, 6, 8, 12, 16, 20, 24, 9999;
+.generate-border-radius() {
+  each(@border-radius, .(@value) {
+    .rounded-@{value} { 
+      border-radius: if(@value = 9999, 9999px, @value * 1px); 
+    }
+  });
+  .rounded-full { border-radius: 9999px; }
+}
+
+// 生成字体粗细工具类
+.generate-font-weight() {
+  .font-thin { font-weight: 100; }
+  .font-light { font-weight: 300; }
+  .font-normal { font-weight: 400; }
+  .font-medium { font-weight: 500; }
+  .font-semibold { font-weight: 600; }
+  .font-bold { font-weight: 700; }
+  .font-extrabold { font-weight: 800; }
+}
+
+// 生成溢出工具类
+.generate-overflow() {
+  .overflow-auto { overflow: auto; }
+  .overflow-hidden { overflow: hidden; }
+  .overflow-visible { overflow: visible; }
+  .overflow-scroll { overflow: scroll; }
+  .overflow-x-auto { overflow-x: auto; }
+  .overflow-y-auto { overflow-y: auto; }
+  .overflow-x-hidden { overflow-x: hidden; }
+  .overflow-y-hidden { overflow-y: hidden; }
+}
+
+// 生成光标工具类
+.generate-cursor() {
+  .cursor-pointer { cursor: pointer; }
+  .cursor-default { cursor: default; }
+  .cursor-not-allowed { cursor: not-allowed; }
+  .cursor-text { cursor: text; }
+}
+
+// 生成用户选择工具类
+.generate-user-select() {
+  .select-none { user-select: none; }
+  .select-text { user-select: text; }
+  .select-all { user-select: all; }
+}
+
+// 执行所有生成函数
+.generate-margin();
+.generate-padding();
+.generate-width();
+.generate-height();
+.generate-font-size();
+.generate-text-align();
+.generate-flex();
+.generate-position();
+.generate-display();
+.generate-border-radius();
+.generate-font-weight();
+.generate-overflow();
+.generate-cursor();
+.generate-user-select();
+
