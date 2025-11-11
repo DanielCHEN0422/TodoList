@@ -66,8 +66,43 @@
   margin-bottom: 24px;
 }
 
-.input-section {
+.add-button-section {
   margin-bottom: 32px;
+}
+
+.add-todo-button {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f472b6 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .button-icon {
+    font-size: 20px;
+  }
+
+  .button-text {
+    font-size: 16px;
+  }
 }
 
 .stats-section {

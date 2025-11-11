@@ -1,0 +1,164 @@
+import { useState, useEffect } from 'react'
+import './AddTodoModal.less'
+
+interface AddTodoModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onAdd: (title: string, description?: string) => Promise<void>
+  loading?: boolean
+}
+
+function AddTodoModal({ isOpen, onClose, onAdd, loading = false }: AddTodoModalProps) {
+  const [titleValue, setTitleValue] = useState('')
+  const [descriptionValue, setDescriptionValue] = useState('')
+  const [error, setError] = useState<string | null>(null)
+
+  // 当 modal 打开时重置表单
+  useEffect(() => {
+    if (isOpen) {
+      setTitleValue('')
+      setDescriptionValue('')
+      setError(null)
+    }
+  }, [isOpen])
+
+  // 处理 ESC 键关闭
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen, onClose])
+
+  // 阻止背景点击关闭（可选，如果需要点击背景关闭可以移除）
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (titleValue.trim() === '') {
+      setError('标题不能为空')
+      return
+    }
+
+    try {
+      setError(null)
+      await onAdd(titleValue.trim(), descriptionValue.trim() || undefined)
+      onClose()
+    } catch (err) {
+      setError('添加待办事项失败')
+      console.error('Error adding todo:', err)
+    }
+  }
+
+  const handleTitleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e)
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="modal-backdrop" onClick={handleBackdropClick}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2 className="modal-title">
+            <span className="title-icon">✨</span>
+            添加新任务
+          </h2>
+          <button
+            className="modal-close-btn"
+            onClick={onClose}
+            aria-label="关闭"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="modal-form">
+          {error && (
+            <div className="form-error">
+              <span className="error-icon">⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          <div className="form-group">
+            <label className="form-label">
+              <span className="label-icon">📝</span>
+              <span className="label-text">标题</span>
+              <span className="label-required">*</span>
+            </label>
+            <input
+              type="text"
+              value={titleValue}
+              onChange={(e) => setTitleValue(e.target.value)}
+              onKeyPress={handleTitleKeyPress}
+              placeholder="输入待办事项标题..."
+              className="form-input"
+              autoFocus
+              disabled={loading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">
+              <span className="label-icon">📄</span>
+              <span className="label-text">描述</span>
+              <span className="label-optional">(可选)</span>
+            </label>
+            <textarea
+              value={descriptionValue}
+              onChange={(e) => setDescriptionValue(e.target.value)}
+              placeholder="输入待办事项描述..."
+              rows={4}
+              className="form-textarea"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={onClose}
+              disabled={loading}
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              className={`btn-submit ${loading ? 'loading' : ''}`}
+              disabled={titleValue.trim() === '' || loading}
+            >
+              {loading ? (
+                <>
+                  <span className="btn-icon spinning">⏳</span>
+                  <span>添加中...</span>
+                </>
+              ) : (
+                <>
+                  <span className="btn-icon">➕</span>
+                  <span>添加任务</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default AddTodoModal
+

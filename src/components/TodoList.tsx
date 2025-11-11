@@ -1,21 +1,31 @@
 import { useState, useEffect } from 'react'
 import * as api from '../services/api'
 import type { Todo } from '../services/api'
+import { useModal } from '../hooks/useModal'
 import TodoItem from './TodoItem'
-import TodoInput from './TodoInput'
 import TodoStats from './TodoStats'
 import TodoEmpty from './TodoEmpty'
 import TodoLoading from './TodoLoading'
 import ClearCompletedButton from './ClearCompletedButton'
 import ErrorMessage from './ErrorMessage'
+import AddTodoModal from './AddTodoModal'
 import './TodoList.less'
 
 function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([])
-  const [titleValue, setTitleValue] = useState('')
-  const [descriptionValue, setDescriptionValue] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [adding, setAdding] = useState(false)
+  
+  // 使用 useModal hook
+  const addTodoModal = useModal({
+    onOpen: () => {
+      setError(null)
+    },
+    onClose: () => {
+      setError(null)
+    },
+  })
 
   // 加载待办事项
   const loadTodos = async () => {
@@ -37,22 +47,22 @@ function TodoList() {
   }, [])
 
   // 添加待办事项
-  const addTodo = async () => {
-    if (titleValue.trim() === '') return
-
+  const handleAddTodo = async (title: string, description?: string) => {
     try {
+      setAdding(true)
       setError(null)
       const newTodo = await api.createTodo({
-        title: titleValue.trim(),
-        description: descriptionValue.trim() || undefined,
+        title,
+        description,
         completed: false,
       })
       setTodos([newTodo, ...todos])
-      setTitleValue('')
-      setDescriptionValue('')
     } catch (err) {
       setError('添加待办事项失败')
       console.error('Error creating todo:', err)
+      throw err // 重新抛出错误，让 modal 处理
+    } finally {
+      setAdding(false)
     }
   }
 
@@ -97,13 +107,6 @@ function TodoList() {
     }
   }
 
-  // 处理回车键
-  const handleTitleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      addTodo()
-    }
-  }
 
   // 统计
   const totalTodos = todos.length
@@ -131,17 +134,16 @@ function TodoList() {
         </div>
       )}
 
-      {/* 输入区域 */}
-      <section className="input-section">
-        <TodoInput
-          titleValue={titleValue}
-          descriptionValue={descriptionValue}
-          onTitleChange={setTitleValue}
-          onDescriptionChange={setDescriptionValue}
-          onAdd={addTodo}
-          onKeyPress={handleTitleKeyPress}
-          loading={loading}
-        />
+      {/* 添加任务按钮 */}
+      <section className="add-button-section">
+        <button
+          className="add-todo-button"
+          onClick={addTodoModal.open}
+          aria-label="添加新任务"
+        >
+          <span className="button-icon">➕</span>
+          <span className="button-text">添加新任务</span>
+        </button>
       </section>
 
       {/* 统计信息 */}
@@ -181,6 +183,14 @@ function TodoList() {
           <ClearCompletedButton count={completedTodos} onClick={clearCompleted} />
         </section>
       )}
+
+      {/* 添加任务 Modal */}
+      <AddTodoModal
+        isOpen={addTodoModal.isOpen}
+        onClose={addTodoModal.close}
+        onAdd={handleAddTodo}
+        loading={adding}
+      />
     </div>
   )
 }
